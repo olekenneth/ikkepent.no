@@ -38,10 +38,10 @@ export default function AlertCard({ alert, distance, onClick, isSelected }: Aler
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-gray-900 text-sm leading-tight truncate">
+          <h3 className={`font-semibold text-gray-900 text-sm leading-tight ${isSelected ? '' : 'truncate'}`}>
             {alert.title}
           </h3>
-          <p className="text-xs text-gray-500 mt-0.5 truncate">{alert.area}</p>
+          <p className={`text-xs text-gray-500 mt-0.5 ${isSelected ? '' : 'truncate'}`}>{alert.area}</p>
         </div>
         <div className="flex flex-col items-end gap-1 shrink-0">
           <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${getSeverityBadgeClass(alert.severity)}`}>
@@ -56,7 +56,7 @@ export default function AlertCard({ alert, distance, onClick, isSelected }: Aler
       </div>
 
       {alert.description && (
-        <p className="text-xs text-gray-600 mt-2 line-clamp-2">{alert.description}</p>
+        <p className={`text-xs text-gray-600 mt-2 ${isSelected ? '' : 'line-clamp-2'}`}>{alert.description}</p>
       )}
 
       <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">

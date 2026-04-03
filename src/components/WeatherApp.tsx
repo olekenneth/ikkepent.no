@@ -84,9 +84,12 @@ export default function WeatherApp({ initialAlerts, error }: WeatherAppProps) {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col h-[100dvh] bg-gray-50">
       {/* Header */}
-      <header className="bg-gray-900 text-white px-4 py-3 flex items-center justify-between shadow-lg z-10">
+      <header
+        className="bg-gray-900 text-white px-4 flex items-center justify-between shadow-lg z-10"
+        style={{ paddingTop: 'calc(0.75rem + env(safe-area-inset-top, 0px))', paddingBottom: '0.75rem' }}
+      >
         <div className="flex items-center gap-3">
           <span className="text-2xl">🌩️</span>
           <div>
@@ -169,7 +172,9 @@ export default function WeatherApp({ initialAlerts, error }: WeatherAppProps) {
             }}
           />
           <AdSlot slot="alert-panel-bottom" className="border-t" />
-          <div className="px-4 py-2 border-t text-xs text-gray-400 text-center">
+          <div className="px-4 border-t text-xs text-gray-400 text-center"
+            style={{ paddingTop: '0.5rem', paddingBottom: 'calc(0.5rem + env(safe-area-inset-bottom, 0px))' }}
+          >
             Sist oppdatert: {lastUpdated.toLocaleTimeString('nb-NO')} · Data: met.no
           </div>
         </div>
