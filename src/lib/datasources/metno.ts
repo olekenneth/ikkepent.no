@@ -97,7 +97,7 @@ export class MetNoDataSource implements DataSource {
   async fetchAlerts(): Promise<WeatherAlert[]> {
     const response = await fetch(this.url, {
       headers: {
-        'User-Agent': 'ikkepent.no/1.0 (https://ikkepent.no)',
+        'User-Agent': 'ikkepent.no/1.0 (https://ikkepent.no; contact@ikkepent.no)',
       },
       next: { revalidate: 300 }, // Cache for 5 minutes
     });

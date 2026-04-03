@@ -1,6 +1,6 @@
 export interface AlertGeometry {
   type: 'Polygon' | 'MultiPolygon' | 'Point' | 'GeometryCollection';
-  coordinates: number[][][] | number[][][][] | number[] | any;
+  coordinates: number[] | number[][] | number[][][] | number[][][][];
   geometries?: AlertGeometry[];
 }
 

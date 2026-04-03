@@ -51,7 +51,7 @@ export default function WeatherApp({ initialAlerts, error }: WeatherAppProps) {
         setShowAll(true);
         setIsLoadingLocation(false);
       },
-      { timeout: 10000, enableHighAccuracy: false }
+      { timeout: 5000, enableHighAccuracy: false }
     );
   }, []);
 

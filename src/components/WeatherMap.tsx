@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import type { Map, LayerGroup, Marker } from 'leaflet';
 import { WeatherAlert } from '@/lib/datasources/types';
 import { getSeverityColor } from '@/lib/severity';
 
@@ -13,9 +14,9 @@ interface WeatherMapProps {
 
 export default function WeatherMap({ alerts, userLocation, selectedAlertId, onSelectAlert }: WeatherMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
-  const layerGroupRef = useRef<any>(null);
-  const userMarkerRef = useRef<any>(null);
+  const mapInstanceRef = useRef<Map | null>(null);
+  const layerGroupRef = useRef<LayerGroup | null>(null);
+  const userMarkerRef = useRef<Marker | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined' || !mapRef.current) return;
@@ -23,7 +24,7 @@ export default function WeatherMap({ alerts, userLocation, selectedAlertId, onSe
     // Dynamically import Leaflet to avoid SSR issues
     import('leaflet').then((L) => {
       // Fix default marker icons
-      delete (L.Icon.Default.prototype as any)._getIconUrl;
+      delete (L.Icon.Default.prototype as { _getIconUrl?: unknown })._getIconUrl;
       L.Icon.Default.mergeOptions({
         iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
         iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
@@ -59,9 +60,10 @@ export default function WeatherMap({ alerts, userLocation, selectedAlertId, onSe
   // Update alert layers when alerts change
   useEffect(() => {
     if (!mapInstanceRef.current || !layerGroupRef.current) return;
+    const layerGroup = layerGroupRef.current;
     
     import('leaflet').then((L) => {
-      layerGroupRef.current.clearLayers();
+      layerGroup.clearLayers();
       
       for (const alert of alerts) {
         if (!alert.geometry) continue;
@@ -86,31 +88,30 @@ export default function WeatherMap({ alerts, userLocation, selectedAlertId, onSe
         `;
 
         try {
-          let layer: any;
-          
           if (alert.geometry.type === 'GeometryCollection' && alert.geometry.geometries) {
             const geoJsonGeometries = alert.geometry.geometries.map(g => ({
               type: 'Feature' as const,
               properties: {},
-              geometry: g as any,
+              geometry: g as GeoJSON.Geometry,
             }));
             
             for (const geom of geoJsonGeometries) {
               const l = L.geoJSON(geom, { style: () => style });
               l.on('click', () => onSelectAlert(alert.id === selectedAlertId ? null : alert.id));
               l.bindPopup(popupContent);
-              l.addTo(layerGroupRef.current);
+              l.addTo(layerGroup);
             }
             continue;
           }
           
-          layer = L.geoJSON({ type: 'Feature', properties: {}, geometry: alert.geometry } as any, {
+          const feature: GeoJSON.Feature = { type: 'Feature', properties: {}, geometry: alert.geometry as GeoJSON.Geometry };
+          const layer = L.geoJSON(feature, {
             style: () => style,
           });
           
           layer.on('click', () => onSelectAlert(alert.id === selectedAlertId ? null : alert.id));
           layer.bindPopup(popupContent);
-          layer.addTo(layerGroupRef.current);
+          layer.addTo(layerGroup);
         } catch {
           // Skip invalid geometries
         }
@@ -121,6 +122,7 @@ export default function WeatherMap({ alerts, userLocation, selectedAlertId, onSe
   // Update user location marker
   useEffect(() => {
     if (!mapInstanceRef.current) return;
+    const map = mapInstanceRef.current;
     
     import('leaflet').then((L) => {
       if (userMarkerRef.current) {
@@ -144,7 +146,7 @@ export default function WeatherMap({ alerts, userLocation, selectedAlertId, onSe
         
         userMarkerRef.current = L.marker([userLocation.lat, userLocation.lng], { icon })
           .bindPopup('Your location')
-          .addTo(mapInstanceRef.current);
+          .addTo(map);
       }
     });
   }, [userLocation]);
@@ -152,10 +154,11 @@ export default function WeatherMap({ alerts, userLocation, selectedAlertId, onSe
   // Pan to selected alert
   useEffect(() => {
     if (!mapInstanceRef.current || !selectedAlertId) return;
+    const map = mapInstanceRef.current;
     
     const alert = alerts.find(a => a.id === selectedAlertId);
     if (alert?.centroid) {
-      mapInstanceRef.current.flyTo(alert.centroid, Math.max(mapInstanceRef.current.getZoom(), 7), {
+      map.flyTo(alert.centroid, Math.max(map.getZoom(), 7), {
         duration: 0.8,
       });
     }
