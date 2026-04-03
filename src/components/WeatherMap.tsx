@@ -145,7 +145,7 @@ export default function WeatherMap({ alerts, userLocation, selectedAlertId, onSe
         });
         
         userMarkerRef.current = L.marker([userLocation.lat, userLocation.lng], { icon })
-          .bindPopup('Your location')
+          .bindPopup('Din posisjon')
           .addTo(map);
       }
     });

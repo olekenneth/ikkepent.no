@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { WeatherAlert } from '@/lib/datasources/types';
 import AlertCard from './AlertCard';
 import { haversineDistance } from '@/lib/distance';
@@ -23,6 +24,8 @@ export default function AlertList({
   selectedAlertId,
   onSelectAlert,
 }: AlertListProps) {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
   const alertsWithDistance = alerts.map(alert => ({
     alert,
     distance: userLocation && alert.centroid
@@ -45,16 +48,24 @@ export default function AlertList({
     ? sortedAlerts.filter(({ distance }) => distance !== undefined && distance <= NEARBY_RADIUS_KM).length
     : 0;
 
+  useEffect(() => {
+    if (!selectedAlertId || !scrollContainerRef.current) return;
+    const el = scrollContainerRef.current.querySelector(`[data-alert-id="${selectedAlertId}"]`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [selectedAlertId]);
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between px-4 py-3 border-b bg-white">
         <div>
           <h2 className="font-semibold text-gray-800">
-            {showAll ? 'All Alerts' : userLocation ? 'Nearby Alerts' : 'Alerts'}
+            {showAll ? 'Alle varsler' : userLocation ? 'Varsler i nærheten' : 'Varsler'}
           </h2>
           <p className="text-xs text-gray-500">
-            {displayedAlerts.length} alert{displayedAlerts.length !== 1 ? 's' : ''}
-            {!showAll && userLocation && ` within ${NEARBY_RADIUS_KM} km`}
+            {displayedAlerts.length} {displayedAlerts.length === 1 ? 'varsel' : 'varsler'}
+            {!showAll && userLocation && ` innen ${NEARBY_RADIUS_KM} km`}
           </p>
         </div>
         {userLocation && (
@@ -62,20 +73,20 @@ export default function AlertList({
             onClick={onToggleShowAll}
             className="text-xs px-3 py-1.5 rounded-full border border-blue-300 text-blue-600 hover:bg-blue-50 transition-colors"
           >
-            {showAll ? `Show nearby (${nearbyCount})` : `Show all (${alerts.length})`}
+            {showAll ? `Vis nære (${nearbyCount})` : `Vis alle (${alerts.length})`}
           </button>
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto p-3 space-y-2">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-3 space-y-2">
         {displayedAlerts.length === 0 ? (
           <div className="text-center py-12 text-gray-400">
             <div className="text-4xl mb-3">🌤️</div>
-            <p className="text-sm font-medium">No active alerts</p>
+            <p className="text-sm font-medium">Ingen aktive varsler</p>
             <p className="text-xs mt-1">
               {userLocation
-                ? `No alerts within ${NEARBY_RADIUS_KM} km of your location`
-                : 'No weather alerts at this time'}
+                ? `Ingen varsler innen ${NEARBY_RADIUS_KM} km fra din posisjon`
+                : 'Ingen værvarsler for øyeblikket'}
             </p>
           </div>
         ) : (
