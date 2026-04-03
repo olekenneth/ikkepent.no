@@ -42,6 +42,21 @@ interface MetNoResponse {
   features: MetNoFeature[];
 }
 
+export function cleanTitle(title: string): string {
+  return title
+    .split(',')
+    .filter(part => {
+      const trimmed = part.trim();
+      // Filter out ISO 8601 timestamps (e.g. "2026-04-03T14:00:00+00:00")
+      if (/^\d{4}-\d{2}-\d{2}T/.test(trimmed)) return false;
+      // Filter out date-time ranges (e.g. "04 april 22:00 UTC til ...")
+      if (/\d{2}:\d{2}\s+UTC/.test(trimmed)) return false;
+      return true;
+    })
+    .join(',')
+    .trim();
+}
+
 function mapSeverity(severity?: string): WeatherAlert['severity'] {
   switch (severity?.toLowerCase()) {
     case 'extreme': return 'Extreme';
@@ -120,7 +135,7 @@ export class MetNoDataSource implements DataSource {
 
       return {
         id: props.id || `metno-${index}`,
-        title: props.title || props.eventAwarenessName || props.event || 'Weather Alert',
+        title: cleanTitle(props.title || props.eventAwarenessName || props.event || 'Weather Alert'),
         description: props.description || '',
         severity: mapSeverity(props.severity),
         event: props.event || props.eventAwarenessName || 'Unknown',

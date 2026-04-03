@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "vitest run",
     "build:cloudflare": "opennextjs-cloudflare build",
     "preview:cloudflare": "opennextjs-cloudflare build && wrangler dev",
     "deploy:cloudflare": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
@@ -29,6 +30,7 @@
     "eslint-config-next": "16.2.2",
     "tailwindcss": "^4",
     "typescript": "^5",
+    "vitest": "^4.1.2",
     "wrangler": "^4.80.0"
   }
 }
