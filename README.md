@@ -70,6 +70,39 @@ npm run build
 npm start
 ```
 
+### Deploy to Cloudflare
+
+The app is configured for deployment to [Cloudflare Workers](https://workers.cloudflare.com/) using [@opennextjs/cloudflare](https://opennext.js.org/cloudflare).
+
+#### Local preview
+
+```bash
+npm run preview:cloudflare
+```
+
+#### Manual deploy
+
+```bash
+npm run deploy:cloudflare
+```
+
+#### CI/CD with GitHub Actions
+
+Pushes to `main` automatically deploy to Cloudflare via GitHub Actions.
+
+Required repository secrets:
+
+| Secret | Description |
+|--------|-------------|
+| `CLOUDFLARE_API_TOKEN` | API token with Workers permissions |
+| `CLOUDFLARE_ACCOUNT_ID` | Your Cloudflare account ID |
+
+#### CDN & Caching
+
+- Static assets (`_next/static/`) are served via Cloudflare's CDN with immutable caching
+- The `/api/alerts` endpoint is cached for 5 minutes at the edge (`s-maxage=300`) with a 60-second stale-while-revalidate window
+- Pages use ISR (Incremental Static Regeneration) with a 5-minute revalidation interval
+
 ## Tech Stack
 
 - **[Next.js 16](https://nextjs.org/)** — React framework with App Router
@@ -77,6 +110,7 @@ npm start
 - **[Tailwind CSS](https://tailwindcss.com/)** — Styling
 - **[Leaflet](https://leafletjs.com/) + [OpenStreetMap](https://www.openstreetmap.org/)** — Interactive mapping
 - **[met.no MetAlerts API](https://api.met.no/weatherapi/metalerts/2.0/documentation)** — Weather alert data
+- **[Cloudflare Workers](https://workers.cloudflare.com/)** — Edge deployment with CDN caching
 
 ## API
 
