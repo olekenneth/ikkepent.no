@@ -72,7 +72,7 @@ npm start
 
 ## Tech Stack
 
-- **[Next.js 14](https://nextjs.org/)** — React framework with App Router
+- **[Next.js 16](https://nextjs.org/)** — React framework with App Router
 - **[TypeScript](https://www.typescriptlang.org/)** — Type safety
 - **[Tailwind CSS](https://tailwindcss.com/)** — Styling
 - **[Leaflet](https://leafletjs.com/) + [OpenStreetMap](https://www.openstreetmap.org/)** — Interactive mapping
