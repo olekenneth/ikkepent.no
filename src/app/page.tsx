@@ -11,7 +11,7 @@ export default async function Home() {
   try {
     alerts = await fetchAllAlerts();
   } catch (e) {
-    error = 'Failed to load weather alerts. Please try again later.';
+    error = 'Kunne ikke laste værvarsler. Vennligst prøv igjen senere.';
     console.error(e);
   }
 

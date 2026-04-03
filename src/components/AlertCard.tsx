@@ -13,7 +13,7 @@ interface AlertCardProps {
 function formatDate(dateStr: string): string {
   if (!dateStr) return '';
   try {
-    return new Date(dateStr).toLocaleString('en-GB', {
+    return new Date(dateStr).toLocaleString('nb-NO', {
       day: 'numeric',
       month: 'short',
       hour: '2-digit',
@@ -27,6 +27,7 @@ function formatDate(dateStr: string): string {
 export default function AlertCard({ alert, distance, onClick, isSelected }: AlertCardProps) {
   return (
     <div
+      data-alert-id={alert.id}
       onClick={onClick}
       className={`
         bg-white rounded-lg shadow-sm border-l-4 p-4 cursor-pointer transition-all
@@ -60,10 +61,10 @@ export default function AlertCard({ alert, distance, onClick, isSelected }: Aler
 
       <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
         {alert.onset && (
-          <span>From: {formatDate(alert.onset)}</span>
+          <span>Fra: {formatDate(alert.onset)}</span>
         )}
         {alert.expires && (
-          <span>Until: {formatDate(alert.expires)}</span>
+          <span>Til: {formatDate(alert.expires)}</span>
         )}
         <span className="ml-auto text-gray-300">{alert.source}</span>
       </div>
