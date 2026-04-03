@@ -42,7 +42,7 @@ interface MetNoResponse {
   features: MetNoFeature[];
 }
 
-function cleanTitle(title: string): string {
+export function cleanTitle(title: string): string {
   return title
     .split(',')
     .filter(part => {
