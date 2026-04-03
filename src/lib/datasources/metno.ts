@@ -42,6 +42,15 @@ interface MetNoResponse {
   features: MetNoFeature[];
 }
 
+function cleanTitle(title: string): string {
+  // Remove ISO 8601 timestamps (e.g., ", 2026-04-03T14:00:00+00:00")
+  let cleaned = title.replace(/,\s*\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:[+-]\d{2}:\d{2}|Z)/g, '');
+  // Remove "DD month HH:MM UTC til DD month HH:MM UTC." date ranges
+  const noMonth = '(?:januar|februar|mars|april|mai|juni|juli|august|september|oktober|november|desember)';
+  cleaned = cleaned.replace(new RegExp(`,\\s*\\d{1,2}\\s+${noMonth}\\s+\\d{2}:\\d{2}\\s+UTC\\s+til\\s+\\d{1,2}\\s+${noMonth}\\s+\\d{2}:\\d{2}\\s+UTC\\.?`, 'gi'), '');
+  return cleaned.trim();
+}
+
 function mapSeverity(severity?: string): WeatherAlert['severity'] {
   switch (severity?.toLowerCase()) {
     case 'extreme': return 'Extreme';
@@ -120,7 +129,7 @@ export class MetNoDataSource implements DataSource {
 
       return {
         id: props.id || `metno-${index}`,
-        title: props.title || props.eventAwarenessName || props.event || 'Weather Alert',
+        title: cleanTitle(props.title || props.eventAwarenessName || props.event || 'Weather Alert'),
         description: props.description || '',
         severity: mapSeverity(props.severity),
         event: props.event || props.eventAwarenessName || 'Unknown',
