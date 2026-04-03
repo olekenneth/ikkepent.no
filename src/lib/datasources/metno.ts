@@ -110,10 +110,13 @@ export class MetNoDataSource implements DataSource {
     
     return data.features.map((feature, index) => {
       const props = feature.properties;
-      const area = [
-        ...(props.county || []),
-        ...(props.municipality || []),
-      ].join(', ') || props.administrativeId || 'Norway';
+      // Filter out numeric-only IDs and ISO date strings, keeping only human-readable location names
+      const isLocationName = (s: string) =>
+        !!s && !/^\d+$/.test(s) && !/^\d{4}-\d{2}-\d{2}T/.test(s);
+
+      const area = (props.county || [])
+        .filter(isLocationName)
+        .join(', ') || props.administrativeId || 'Norway';
 
       return {
         id: props.id || `metno-${index}`,
