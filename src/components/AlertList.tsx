@@ -73,7 +73,7 @@ export default function AlertList({
             onClick={onToggleShowAll}
             className="text-xs px-3 py-1.5 rounded-full border border-blue-300 text-blue-600 hover:bg-blue-50 transition-colors"
           >
-            {showAll ? `Vis nærme (${nearbyCount})` : `Vis alle (${alerts.length})`}
+            {showAll ? `Vis nære (${nearbyCount})` : `Vis alle (${alerts.length})`}
           </button>
         )}
       </div>
