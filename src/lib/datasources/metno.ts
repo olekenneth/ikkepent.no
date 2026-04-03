@@ -43,12 +43,18 @@ interface MetNoResponse {
 }
 
 function cleanTitle(title: string): string {
-  // Remove ISO 8601 timestamps (e.g., ", 2026-04-03T14:00:00+00:00")
-  let cleaned = title.replace(/,\s*\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:[+-]\d{2}:\d{2}|Z)/g, '');
-  // Remove "DD month HH:MM UTC til DD month HH:MM UTC." date ranges
-  const noMonth = '(?:januar|februar|mars|april|mai|juni|juli|august|september|oktober|november|desember)';
-  cleaned = cleaned.replace(new RegExp(`,\\s*\\d{1,2}\\s+${noMonth}\\s+\\d{2}:\\d{2}\\s+UTC\\s+til\\s+\\d{1,2}\\s+${noMonth}\\s+\\d{2}:\\d{2}\\s+UTC\\.?`, 'gi'), '');
-  return cleaned.trim();
+  return title
+    .split(',')
+    .filter(part => {
+      const trimmed = part.trim();
+      // Filter out ISO 8601 timestamps (e.g. "2026-04-03T14:00:00+00:00")
+      if (/^\d{4}-\d{2}-\d{2}T/.test(trimmed)) return false;
+      // Filter out date-time ranges (e.g. "04 april 22:00 UTC til ...")
+      if (/\d{2}:\d{2}\s+UTC/.test(trimmed)) return false;
+      return true;
+    })
+    .join(',')
+    .trim();
 }
 
 function mapSeverity(severity?: string): WeatherAlert['severity'] {
