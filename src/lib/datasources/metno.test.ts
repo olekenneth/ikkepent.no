@@ -25,4 +25,8 @@ describe('cleanTitle', () => {
   it('leaves titles without timestamps unchanged', () => {
     expect(cleanTitle('Kuling, gult nivå, Lindesnes - Åna-Sira')).toBe('Kuling, gult nivå, Lindesnes - Åna-Sira');
   });
+
+  it('strips ISO 8601 timestamps (Rogaland og Agder)', () => {
+    expect(cleanTitle('Ekstremt kraftige vindkast, rødt nivå, Deler av Rogaland og Agder, 2026-04-05T11:00:00+00:00, 2026-04-05T15:00:00+00:00')).toBe('Ekstremt kraftige vindkast, rødt nivå, Deler av Rogaland og Agder');
+  });
 });
